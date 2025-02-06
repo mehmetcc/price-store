@@ -18,6 +18,13 @@ func SetupRoutes(mux *http.ServeMux, resolver *admin.Resolver) {
 	})
 
 	mux.HandleFunc("/symbol", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		if r.Method == http.MethodOptions {
+			return
+		}
+
 		if r.Method == http.MethodPost {
 			type request struct {
 				Symbol string `json:"symbol"`
@@ -61,6 +68,13 @@ func SetupRoutes(mux *http.ServeMux, resolver *admin.Resolver) {
 	})
 
 	mux.HandleFunc("/price", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		if r.Method == http.MethodOptions {
+			return
+		}
+
 		if r.Method != http.MethodGet {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 			return
@@ -99,6 +113,13 @@ func SetupRoutes(mux *http.ServeMux, resolver *admin.Resolver) {
 	})
 
 	mux.HandleFunc("/price/count", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		if r.Method == http.MethodOptions {
+			return
+		}
+
 		if r.Method != http.MethodGet {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 			return

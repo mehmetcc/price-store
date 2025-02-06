@@ -34,6 +34,7 @@ func main() {
 	resolver := admin.NewAdminResolver(*cfg, *ws)
 
 	mux := http.NewServeMux()
+
 	routes.SetupRoutes(mux, resolver)
 
 	server := &http.Server{
