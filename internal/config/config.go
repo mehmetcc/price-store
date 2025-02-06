@@ -8,6 +8,7 @@ import (
 
 type Config struct {
 	WSUrl string
+	Dsn   string
 	Port  string
 }
 
@@ -19,6 +20,7 @@ func LoadConfig() (*Config, error) {
 
 	return &Config{
 		WSUrl: os.Getenv("WS_URL"),
+		Dsn:   os.Getenv("DSN"),
 		Port:  os.Getenv("PORT"),
 	}, nil
 }
