@@ -10,23 +10,23 @@ import (
 	"github.com/mehmetcc/price-store/internal/websocket"
 )
 
-type Client struct {
+type Resolver struct {
 	cfg      *config.Config
 	wsClient *websocket.Client
 }
 
-func NewAdminClient(cfg config.Config, wsClient websocket.Client) *Client {
-	return &Client{
+func NewAdminResolver(cfg config.Config, wsClient websocket.Client) *Resolver {
+	return &Resolver{
 		cfg:      &cfg,
 		wsClient: &wsClient,
 	}
 }
 
-func (c *Client) AddSymbol(symbol string) error {
+func (c *Resolver) AddSymbol(symbol string) error {
 	return c.wsClient.SendSymbol(symbol)
 }
 
-func (c *Client) GetSymbols() ([]string, error) {
+func (c *Resolver) GetSymbols() ([]string, error) {
 	url := fmt.Sprintf("%s/symbol?client_id=%s", c.cfg.PricerUrl, c.cfg.ClientId)
 	resp, err := http.Get(url)
 	if err != nil {
@@ -46,10 +46,10 @@ func (c *Client) GetSymbols() ([]string, error) {
 	return symbols, nil
 }
 
-func (c *Client) GetPriceUpdates(page, pageSize int) ([]db.PriceUpdate, error) {
+func (c *Resolver) GetPriceUpdates(page, pageSize int) ([]db.PriceUpdate, error) {
 	return db.GetPriceUpdates(page, pageSize)
 }
 
-func (c *Client) GetTotalPriceUpdatesCount() (int64, error) {
+func (c *Resolver) GetTotalPriceUpdatesCount() (int64, error) {
 	return db.GetTotalPriceUpdatesCount()
 }

@@ -31,10 +31,10 @@ func main() {
 	defer ws.Close()
 	go ws.Listen()
 
-	client := admin.NewAdminClient(*cfg, *ws)
+	resolver := admin.NewAdminResolver(*cfg, *ws)
 
 	mux := http.NewServeMux()
-	routes.SetupRoutes(mux, client)
+	routes.SetupRoutes(mux, resolver)
 
 	server := &http.Server{
 		Addr:    ":" + cfg.Port,

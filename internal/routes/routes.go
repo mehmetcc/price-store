@@ -9,7 +9,7 @@ import (
 	"github.com/mehmetcc/price-store/internal/admin"
 )
 
-func SetupRoutes(mux *http.ServeMux, client *admin.Client) {
+func SetupRoutes(mux *http.ServeMux, resolver *admin.Resolver) {
 	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{
@@ -33,7 +33,7 @@ func SetupRoutes(mux *http.ServeMux, client *admin.Client) {
 				return
 			}
 
-			if err := client.AddSymbol(req.Symbol); err != nil {
+			if err := resolver.AddSymbol(req.Symbol); err != nil {
 				http.Error(w, "failed to send symbol to websocket", http.StatusInternalServerError)
 				return
 			}
@@ -44,7 +44,7 @@ func SetupRoutes(mux *http.ServeMux, client *admin.Client) {
 				"symbol": req.Symbol,
 			})
 		} else if r.Method == http.MethodGet {
-			symbols, err := client.GetSymbols()
+			symbols, err := resolver.GetSymbols()
 			if err != nil {
 				http.Error(w, "failed to retrieve symbols", http.StatusInternalServerError)
 				log.Println(err)
@@ -85,7 +85,7 @@ func SetupRoutes(mux *http.ServeMux, client *admin.Client) {
 			}
 		}
 
-		priceUpdates, err := client.GetPriceUpdates(page, pageSize)
+		priceUpdates, err := resolver.GetPriceUpdates(page, pageSize)
 		if err != nil {
 			http.Error(w, "failed to retrieve price updates", http.StatusInternalServerError)
 			log.Println(err)
@@ -104,7 +104,7 @@ func SetupRoutes(mux *http.ServeMux, client *admin.Client) {
 			return
 		}
 
-		count, err := client.GetTotalPriceUpdatesCount()
+		count, err := resolver.GetTotalPriceUpdatesCount()
 		if err != nil {
 			http.Error(w, "failed to retrieve price updates count", http.StatusInternalServerError)
 			log.Println(err)
