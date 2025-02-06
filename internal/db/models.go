@@ -8,3 +8,11 @@ type PriceUpdate struct {
 	Price     float64
 	Timestamp time.Time
 }
+
+func NewPriceUpdate(symbol string, price float64) *PriceUpdate {
+	return &PriceUpdate{
+		Symbol:    symbol,
+		Price:     price,
+		Timestamp: time.Now(),
+	}
+}

@@ -3,16 +3,15 @@ package db
 import (
 	"log"
 
-	"github.com/mehmetcc/price-store/internal/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 var db *gorm.DB
 
-func Connect(cfg *config.Config) {
+func Connect(dsn string) {
 	var err error
-	db, err = gorm.Open(postgres.Open(cfg.Dsn), &gorm.Config{})
+	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("could not connect to db: %v", err)
 	}
