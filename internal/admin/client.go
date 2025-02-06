@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/mehmetcc/price-store/internal/config"
+	"github.com/mehmetcc/price-store/internal/db"
 	"github.com/mehmetcc/price-store/internal/websocket"
 )
 
@@ -43,4 +44,12 @@ func (c *Client) GetSymbols() ([]string, error) {
 	}
 
 	return symbols, nil
+}
+
+func (c *Client) GetPriceUpdates(page, pageSize int) ([]db.PriceUpdate, error) {
+	return db.GetPriceUpdates(page, pageSize)
+}
+
+func (c *Client) GetTotalPriceUpdatesCount() (int64, error) {
+	return db.GetTotalPriceUpdatesCount()
 }

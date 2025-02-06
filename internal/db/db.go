@@ -26,3 +26,20 @@ func Create(pu *PriceUpdate) error {
 	result := db.Create(pu)
 	return result.Error
 }
+
+func GetPriceUpdates(page, pageSize int) ([]PriceUpdate, error) {
+	var priceUpdates []PriceUpdate
+	offset := (page - 1) * pageSize
+	result := db.Offset(offset).Limit(pageSize).Find(&priceUpdates)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return priceUpdates, nil
+}
+
+func GetTotalPriceUpdatesCount() (int64, error) {
+	var count int64
+	result := db.Model(&PriceUpdate{}).Count(&count)
+	return count, result.Error
+}
