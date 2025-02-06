@@ -66,7 +66,7 @@ func TestCreatePriceUpdate(t *testing.T) {
 	}
 
 	// Connect to the database.
-	Connect(cfg.Dsn)
+	Connect(cfg)
 
 	// Create a new PriceUpdate record.
 	pu := &PriceUpdate{
@@ -101,7 +101,7 @@ func TestConnectInvalidDSN(t *testing.T) {
 		cfg := &config.Config{
 			Dsn: "invalid_dsn",
 		}
-		Connect(cfg.Dsn)
+		Connect(cfg)
 		// If Connect returns normally, something is wrong.
 		return
 	}

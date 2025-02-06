@@ -8,28 +8,27 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/mehmetcc/price-store/internal/config"
 	"github.com/mehmetcc/price-store/internal/db"
 )
-
-const clientId = "price-store-001"
 
 type Client struct {
 	conn *websocket.Conn
 	url  string
 }
 
-func NewClient(url string) (*Client, error) {
+func NewClient(cfg *config.Config) (*Client, error) {
 	headers := make(http.Header)
-	headers.Add("X-Client-ID", clientId)
+	headers.Add("X-Client-ID", cfg.ClientId)
 
-	c, _, err := websocket.DefaultDialer.Dial(url, headers)
+	c, _, err := websocket.DefaultDialer.Dial(cfg.WsUrl, headers)
 	if err != nil {
 		log.Fatalf("failed to connect to websocket: %v", err)
 	}
 
 	return &Client{
 		conn: c,
-		url:  url,
+		url:  cfg.WsUrl,
 	}, nil
 }
 

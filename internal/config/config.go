@@ -7,9 +7,12 @@ import (
 )
 
 type Config struct {
-	WsUrl string
-	Dsn   string
-	Port  string
+	WsUrl    string
+	Dsn      string
+	Port     string
+	ClientId string
+
+	PricerUrl string
 }
 
 func LoadConfig() (*Config, error) {
@@ -19,8 +22,10 @@ func LoadConfig() (*Config, error) {
 	}
 
 	return &Config{
-		WsUrl: os.Getenv("WS_URL"),
-		Dsn:   os.Getenv("DSN"),
-		Port:  os.Getenv("PORT"),
+		WsUrl:     os.Getenv("WS_URL"),
+		Dsn:       os.Getenv("DSN"),
+		Port:      os.Getenv("PORT"),
+		ClientId:  os.Getenv("CLIENT_ID"),
+		PricerUrl: os.Getenv("PRICER_URL"),
 	}, nil
 }
