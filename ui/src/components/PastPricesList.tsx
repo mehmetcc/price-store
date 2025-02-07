@@ -58,7 +58,7 @@ export default function PastPricesList() {
                         <tr key={price.id}>
                             <td className="px-4 py-2 border">{price.id}</td>
                             <td className="px-4 py-2 border">{price.symbol}</td>
-                            <td className="px-4 py-2 border">{price.price}</td>
+                            <td className="px-4 py-2 border">{price.price.toFixed(2)}</td>
                             <td className="px-4 py-2 border">
                                 {new Date(price.timestamp).toLocaleString()}
                             </td>
