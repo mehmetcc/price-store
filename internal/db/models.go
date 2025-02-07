@@ -3,10 +3,10 @@ package db
 import "time"
 
 type PriceUpdate struct {
-	ID        uint `gorm:"primaryKey"`
-	Symbol    string
-	Price     float64
-	Timestamp time.Time
+	ID        uint      `json:"id" gorm:"primaryKey"`
+	Symbol    string    `json:"symbol"`
+	Price     float64   `json:"price"`
+	Timestamp time.Time `json:"timestamp"`
 }
 
 func NewPriceUpdate(symbol string, price float64) *PriceUpdate {

@@ -1,6 +1,7 @@
 package db
 
 import (
+	"errors"
 	"log"
 
 	"github.com/mehmetcc/price-store/internal/config"
@@ -23,6 +24,9 @@ func Connect(cfg *config.Config) {
 }
 
 func Create(pu *PriceUpdate) error {
+	if pu.Price == 0 {
+		return errors.New("price cannot be 0")
+	}
 	result := db.Create(pu)
 	return result.Error
 }
