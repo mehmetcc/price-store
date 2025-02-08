@@ -20,6 +20,22 @@ export async function addSymbol(symbol: string): Promise<void> {
         const errorText = await response.text();
         throw new Error(errorText || 'Error adding symbol');
     }
+    // Parse and ignore the response (contains status and symbol)
+    await response.json();
+}
+
+export async function deleteSymbol(symbol: string): Promise<void> {
+    const response = await fetch(`${config.baseUrl}/symbol`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ symbol }),
+    });
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Error deleting symbol');
+    }
+    // Parse and ignore the response (contains status and symbol)
+    await response.json();
 }
 
 export async function fetchPriceUpdates(page: number, pageSize: number): Promise<PriceUpdate[]> {
