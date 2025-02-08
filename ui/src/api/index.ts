@@ -56,11 +56,26 @@ export async function fetchPriceCount(): Promise<number> {
     return data.count;
 }
 
-export async function fetchPriceUpdatesBySymbol(symbol: string): Promise<PriceUpdate[]> {
-    const response = await fetch(`${config.baseUrl}/price/symbol?symbol=${symbol}`);
+export async function fetchPriceUpdatesBySymbol(
+    symbol: string, 
+    page: number, 
+    pageSize: number
+): Promise<PriceUpdate[]> {
+    const response = await fetch(
+        `${config.baseUrl}/price/symbol?symbol=${symbol}&page=${page}&pageSize=${pageSize}`
+    );
     if (!response.ok) {
         throw new Error('Error fetching price updates by symbol');
     }
     const data: PriceUpdatesResponse = await response.json();
     return data.price_updates;
+}
+
+export async function fetchFilteredPriceCount(symbol: string): Promise<number> {
+    const response = await fetch(`${config.baseUrl}/price/count/symbol?symbol=${symbol}`);
+    if (!response.ok) {
+        throw new Error('Error fetching filtered price count');
+    }
+    const data: PriceCountResponse = await response.json();
+    return data.count;
 }

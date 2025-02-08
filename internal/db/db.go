@@ -48,12 +48,21 @@ func GetTotalPriceUpdatesCount() (int64, error) {
 	return count, result.Error
 }
 
-func SearchPriceUpdatesBySymbol(symbol string) ([]PriceUpdate, error) {
+func SearchPriceUpdatesBySymbol(symbol string, page, pageSize int) ([]PriceUpdate, error) {
 	var priceUpdates []PriceUpdate
-	result := db.Where("symbol = ?", symbol).Find(&priceUpdates)
+	offset := (page - 1) * pageSize
+	result := db.Where("symbol = ?", symbol).
+		Offset(offset).
+		Limit(pageSize).
+		Find(&priceUpdates)
 	if result.Error != nil {
 		return nil, result.Error
 	}
-
 	return priceUpdates, nil
+}
+
+func GetFilteredPriceUpdatesCount(symbol string) (int64, error) {
+	var count int64
+	result := db.Model(&PriceUpdate{}).Where("symbol = ?", symbol).Count(&count)
+	return count, result.Error
 }

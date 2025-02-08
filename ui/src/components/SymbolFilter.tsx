@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { fetchSymbols, fetchPriceUpdatesBySymbol } from '@/api';
+import { fetchSymbols, fetchPriceUpdatesBySymbol, fetchPriceCount, fetchFilteredPriceCount } from '@/api';
 import { PriceUpdate } from '@/types';
 
 interface SymbolFilterProps {
-  onPriceUpdatesChange?: (updates: PriceUpdate[]) => void;
+  onPriceUpdatesChange: (updates: PriceUpdate[], totalCount: number, symbol: string) => void;
+  currentPage: number;
+  pageSize: number;
 }
 
-export const SymbolFilter: React.FC<SymbolFilterProps> = ({ onPriceUpdatesChange }) => {
+export const SymbolFilter: React.FC<SymbolFilterProps> = ({
+  onPriceUpdatesChange,
+  currentPage,
+  pageSize
+}) => {
   const [symbols, setSymbols] = useState<string[]>([]);
   const [selectedSymbol, setSelectedSymbol] = useState<string>('');
   const [loading, setLoading] = useState(false);
@@ -27,12 +33,13 @@ export const SymbolFilter: React.FC<SymbolFilterProps> = ({ onPriceUpdatesChange
   const handleSymbolChange = async (event: React.ChangeEvent<HTMLSelectElement>) => {
     const symbol = event.target.value;
     setSelectedSymbol(symbol);
-    
+
     if (symbol) {
       setLoading(true);
       try {
-        const updates = await fetchPriceUpdatesBySymbol(symbol);
-        onPriceUpdatesChange?.(updates);
+        const updates = await fetchPriceUpdatesBySymbol(symbol, currentPage, pageSize);
+        const count = await fetchFilteredPriceCount(symbol);
+        onPriceUpdatesChange(updates, count, symbol);
       } catch (error) {
         console.error('Failed to fetch price updates:', error);
       } finally {
@@ -40,6 +47,8 @@ export const SymbolFilter: React.FC<SymbolFilterProps> = ({ onPriceUpdatesChange
       }
     }
   };
+
+
 
   return (
     <div className="flex items-center gap-4">

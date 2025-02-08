@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { fetchPriceUpdates, fetchPriceCount } from '../api';
+import { fetchPriceUpdates, fetchPriceCount, fetchPriceUpdatesBySymbol, fetchFilteredPriceCount } from '../api';
 import { PriceUpdate } from '../types';
 import Pagination from './Pagination';
 import { SymbolFilter } from './SymbolFilter';
@@ -14,18 +14,26 @@ export default function PastPricesList() {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [isFiltered, setIsFiltered] = useState(false);
+    const [selectedSymbol, setSelectedSymbol] = useState<string>('');
 
     const loadPrices = async (page: number) => {
-        if (isFiltered) return; // Don't load paginated prices when filtering by symbol
         setLoading(true);
         setError(null);
         try {
-            const [priceData, count] = await Promise.all([
-                fetchPriceUpdates(page, config.pageSize),
-                fetchPriceCount(),
-            ]);
-            setPrices(priceData);
-            setTotalPages(Math.ceil(count / config.pageSize));
+            if (isFiltered && selectedSymbol) {
+                const updates = await fetchPriceUpdatesBySymbol(selectedSymbol, page, config.pageSize);
+                setPrices(updates);
+                // Use the new filtered count endpoint
+                const count = await fetchFilteredPriceCount(selectedSymbol);
+                setTotalPages(Math.ceil(count / config.pageSize));
+            } else {
+                const [priceData, count] = await Promise.all([
+                    fetchPriceUpdates(page, config.pageSize),
+                    fetchPriceCount(),
+                ]);
+                setPrices(priceData);
+                setTotalPages(Math.ceil(count / config.pageSize));
+            }
             setCurrentPage(page);
         } catch (err: any) {
             setError(err.message || 'Error fetching price updates');
@@ -34,14 +42,17 @@ export default function PastPricesList() {
         }
     };
 
-    const handleSymbolPriceUpdates = (updates: PriceUpdate[]) => {
+    const handleSymbolPriceUpdates = (updates: PriceUpdate[], totalCount: number, symbol: string) => {
         setPrices(updates);
         setIsFiltered(true);
-        setTotalPages(1); // Reset pagination when filtering
+        setTotalPages(Math.ceil(totalCount / config.pageSize));
+        setSelectedSymbol(symbol);
+        setCurrentPage(1);
     };
 
     const handleSymbolClear = () => {
         setIsFiltered(false);
+        setSelectedSymbol('');
         loadPrices(1);
     };
 
@@ -54,7 +65,10 @@ export default function PastPricesList() {
     return (
         <div>
             <div className="mb-4 flex items-center justify-end">
-                <SymbolFilter onPriceUpdatesChange={handleSymbolPriceUpdates} />
+                <SymbolFilter onPriceUpdatesChange={handleSymbolPriceUpdates}
+                    currentPage={currentPage}
+                    pageSize={config.pageSize}
+                />
                 {isFiltered && (
                     <button
                         onClick={handleSymbolClear}
@@ -67,7 +81,7 @@ export default function PastPricesList() {
 
             {loading && <p>Loading price updates...</p>}
             {error && <p className="text-red-500">{error}</p>}
-            
+
             <table className="min-w-full border mt-4">
                 {/* ...existing table header... */}
                 <tbody>
@@ -84,17 +98,15 @@ export default function PastPricesList() {
                 </tbody>
             </table>
 
-            {!isFiltered && (
-                <div className="mt-4 flex justify-center">
-                    <div className="w-full max-w-4xl">
-                        <Pagination
-                            currentPage={currentPage}
-                            totalPages={totalPages}
-                            onPageChange={loadPrices}
-                        />
-                    </div>
+            <div className="mt-4 flex justify-center">
+                <div className="w-full max-w-4xl">
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={loadPrices}
+                    />
                 </div>
-            )}
+            </div>
         </div>
     );
 }

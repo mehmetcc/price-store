@@ -176,7 +176,26 @@ func SetupRoutes(mux *http.ServeMux, resolver *admin.Resolver) {
 			return
 		}
 
-		priceUpdates, err := resolver.GetPriceUpdatesBySymbol(symbol)
+		page := 1
+		pageSize := 100
+		if r.URL.Query().Get("page") != "" {
+			var err error
+			page, err = strconv.Atoi(r.URL.Query().Get("page"))
+			if err != nil {
+				http.Error(w, "Invalid page parameter", http.StatusBadRequest)
+				return
+			}
+		}
+		if r.URL.Query().Get("pageSize") != "" {
+			var err error
+			pageSize, err = strconv.Atoi(r.URL.Query().Get("pageSize"))
+			if err != nil {
+				http.Error(w, "Invalid pageSize parameter", http.StatusBadRequest)
+				return
+			}
+		}
+
+		priceUpdates, err := resolver.GetPriceUpdatesBySymbol(symbol, page, pageSize)
 		if err != nil {
 			http.Error(w, "failed to retrieve price updates", http.StatusInternalServerError)
 			log.Println(err)
@@ -186,6 +205,37 @@ func SetupRoutes(mux *http.ServeMux, resolver *admin.Resolver) {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"price_updates": priceUpdates,
+		})
+	})
+	mux.HandleFunc("/price/count/symbol", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		if r.Method == http.MethodOptions {
+			return
+		}
+
+		if r.Method != http.MethodGet {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		symbol := r.URL.Query().Get("symbol")
+		if symbol == "" {
+			http.Error(w, "symbol is required", http.StatusBadRequest)
+			return
+		}
+
+		count, err := resolver.GetFilteredPriceUpdatesCount(symbol)
+		if err != nil {
+			http.Error(w, "failed to retrieve filtered price updates count", http.StatusInternalServerError)
+			log.Println(err)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"count": count,
 		})
 	})
 }
