@@ -42,7 +42,7 @@ export default function SymbolForm({ onSymbolAdded }: SymbolFormProps) {
                         placeholder="Enter symbol"
                         className="flex-1 border p-2 mr-2"
                     />
-                    <button type="submit" className="bg-blue-500 text-white p-2" disabled={loading}>
+                    <button type="submit" className="bg-indigo-600 text-white p-2" disabled={loading}>
                         {loading ? 'Adding...' : 'Add Symbol'}
                     </button>
                 </div>
@@ -56,7 +56,7 @@ export default function SymbolForm({ onSymbolAdded }: SymbolFormProps) {
                         <p className="mb-4">{error}</p>
                         <button
                             onClick={() => setError(null)}
-                            className="bg-blue-500 text-white px-4 py-2 rounded"
+                            className="bg-indigo-600 text-white px-4 py-2 rounded"
                         >
                             Close
                         </button>

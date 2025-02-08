@@ -66,12 +66,14 @@ export default function PastPricesList() {
                     ))}
                 </tbody>
             </table>
-            <div className="mt-4">
-                <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={loadPrices}
-                />
+            <div className="mt-4 flex justify-center">
+                <div className="w-full max-w-4xl">
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={loadPrices}
+                    />
+                </div>
             </div>
         </div>
     );

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { fetchSymbols, deleteSymbol } from '../api';
-import { TrashIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon } from '@heroicons/react/24/outline';
  
 export default function SymbolsList() {
     const [symbols, setSymbols] = useState<string[]>([]);
@@ -53,7 +53,7 @@ export default function SymbolsList() {
                             className="text-red-500 hover:text-red-700 ml-2"
                             disabled={deleting === symbol}
                         >
-                            {deleting === symbol ? 'Deleting...' : <TrashIcon className="w-5 h-5" />}
+                            {deleting === symbol ? 'Deleting...' : <XMarkIcon className="w-5 h-5" />}
                         </button>
                     </li>
                 ))}
