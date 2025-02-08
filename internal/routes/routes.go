@@ -19,17 +19,17 @@ func SetupRoutes(mux *http.ServeMux, resolver *admin.Resolver) {
 
 	mux.HandleFunc("/symbol", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 		if r.Method == http.MethodOptions {
 			return
 		}
 
-		if r.Method == http.MethodPost {
+		switch r.Method {
+		case http.MethodPost:
 			type request struct {
 				Symbol string `json:"symbol"`
 			}
-
 			var req request
 			if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 				http.Error(w, "cannot parse request body", http.StatusBadRequest)
@@ -39,30 +39,49 @@ func SetupRoutes(mux *http.ServeMux, resolver *admin.Resolver) {
 				http.Error(w, "symbol is required", http.StatusBadRequest)
 				return
 			}
-
 			if err := resolver.AddSymbol(req.Symbol); err != nil {
-				http.Error(w, "failed to send symbol to websocket", http.StatusInternalServerError)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
-
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(map[string]interface{}{
 				"status": "tracking initiated",
 				"symbol": req.Symbol,
 			})
-		} else if r.Method == http.MethodGet {
+		case http.MethodGet:
 			symbols, err := resolver.GetSymbols()
 			if err != nil {
-				http.Error(w, "failed to retrieve symbols", http.StatusInternalServerError)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
 				log.Println(err)
 				return
 			}
-
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(map[string]interface{}{
 				"symbols": symbols,
 			})
-		} else {
+		case http.MethodDelete:
+			type request struct {
+				Symbol string `json:"symbol"`
+			}
+			var req request
+			if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+				http.Error(w, "cannot parse request body", http.StatusBadRequest)
+				return
+			}
+			if req.Symbol == "" {
+				http.Error(w, "symbol is required", http.StatusBadRequest)
+				return
+			}
+			if err := resolver.DeleteSymbol(req.Symbol); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"status": "tracking removed",
+				"symbol": req.Symbol,
+			})
+		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
 	})

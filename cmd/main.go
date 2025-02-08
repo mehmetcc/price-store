@@ -31,7 +31,7 @@ func main() {
 	defer ws.Close()
 	go ws.Listen()
 
-	resolver := admin.NewAdminResolver(*cfg, *ws)
+	resolver := admin.NewAdminResolver(*cfg)
 
 	mux := http.NewServeMux()
 
