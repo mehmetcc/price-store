@@ -1,10 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface PaginationProps {
     currentPage: number;
     totalPages: number;
     onPageChange: (page: number) => void;
-    // Optional info for results text
     from?: number;
     to?: number;
     total?: number;
@@ -18,43 +17,46 @@ export default function Pagination({
     to,
     total,
 }: PaginationProps) {
+    const [pages, setPages] = useState<(number | 'ellipsis')[]>([]);
+
+    useEffect(() => {
+        const getPages = (): (number | 'ellipsis')[] => {
+            if (totalPages <= 7) {
+                return Array.from({ length: totalPages }, (_, i) => i + 1);
+            }
+
+            const pages: (number | 'ellipsis')[] = [];
+            if (currentPage <= 4) {
+                for (let i = 1; i <= 5; i++) {
+                    pages.push(i);
+                }
+                pages.push('ellipsis');
+                pages.push(totalPages);
+            } else if (currentPage >= totalPages - 3) {
+                pages.push(1);
+                pages.push('ellipsis');
+                for (let i = totalPages - 4; i <= totalPages; i++) {
+                    pages.push(i);
+                }
+            } else {
+                pages.push(1);
+                pages.push('ellipsis');
+                pages.push(currentPage - 1, currentPage, currentPage + 1);
+                pages.push('ellipsis');
+                pages.push(totalPages);
+            }
+            return pages;
+        };
+
+        setPages(getPages());
+    }, [currentPage, totalPages]);
+
     const handlePageChange = (page: number, e?: React.MouseEvent) => {
         if (e) e.preventDefault();
         if (page >= 1 && page <= totalPages && page !== currentPage) {
             onPageChange(page);
         }
     };
-
-    // Generate page numbers with ellipsis if needed
-    const getPages = (): (number | 'ellipsis')[] => {
-        if (totalPages <= 7) {
-            return Array.from({ length: totalPages }, (_, i) => i + 1);
-        }
-
-        const pages: (number | 'ellipsis')[] = [];
-        if (currentPage <= 4) {
-            for (let i = 1; i <= 5; i++) {
-                pages.push(i);
-            }
-            pages.push('ellipsis');
-            pages.push(totalPages);
-        } else if (currentPage >= totalPages - 3) {
-            pages.push(1);
-            pages.push('ellipsis');
-            for (let i = totalPages - 4; i <= totalPages; i++) {
-                pages.push(i);
-            }
-        } else {
-            pages.push(1);
-            pages.push('ellipsis');
-            pages.push(currentPage - 1, currentPage, currentPage + 1);
-            pages.push('ellipsis');
-            pages.push(totalPages);
-        }
-        return pages;
-    };
-
-    const pages = getPages();
 
     return (
         <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">

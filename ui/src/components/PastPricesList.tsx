@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { fetchPriceUpdates, fetchPriceCount } from '../api';
 import { PriceUpdate } from '../types';
 import Pagination from './Pagination';
+import { SymbolFilter } from './SymbolFilter';
 import config from '@/config/config';
 
 export default function PastPricesList() {
@@ -12,8 +13,10 @@ export default function PastPricesList() {
     const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [isFiltered, setIsFiltered] = useState(false);
 
     const loadPrices = async (page: number) => {
+        if (isFiltered) return; // Don't load paginated prices when filtering by symbol
         setLoading(true);
         setError(null);
         try {
@@ -31,28 +34,42 @@ export default function PastPricesList() {
         }
     };
 
-    useEffect(() => {
-        loadPrices(currentPage);
-    }, [currentPage]);
+    const handleSymbolPriceUpdates = (updates: PriceUpdate[]) => {
+        setPrices(updates);
+        setIsFiltered(true);
+        setTotalPages(1); // Reset pagination when filtering
+    };
+
+    const handleSymbolClear = () => {
+        setIsFiltered(false);
+        loadPrices(1);
+    };
 
     useEffect(() => {
-        console.log("Prices", prices)
-    }, [prices]);
-
+        if (!isFiltered) {
+            loadPrices(currentPage);
+        }
+    }, [currentPage, isFiltered]);
 
     return (
         <div>
+            <div className="mb-4 flex items-center justify-end">
+                <SymbolFilter onPriceUpdatesChange={handleSymbolPriceUpdates} />
+                {isFiltered && (
+                    <button
+                        onClick={handleSymbolClear}
+                        className="ml-4 px-3 py-1 text-sm bg-gray-200 rounded hover:bg-gray-300"
+                    >
+                        Clear Filter
+                    </button>
+                )}
+            </div>
+
             {loading && <p>Loading price updates...</p>}
             {error && <p className="text-red-500">{error}</p>}
+            
             <table className="min-w-full border mt-4">
-                <thead className="bg-gray-50">
-                    <tr>
-                        <th className="px-4 py-2 border">ID</th>
-                        <th className="px-4 py-2 border">Symbol</th>
-                        <th className="px-4 py-2 border">Price</th>
-                        <th className="px-4 py-2 border">Timestamp</th>
-                    </tr>
-                </thead>
+                {/* ...existing table header... */}
                 <tbody>
                     {prices.map((price) => (
                         <tr key={price.id}>
@@ -66,15 +83,18 @@ export default function PastPricesList() {
                     ))}
                 </tbody>
             </table>
-            <div className="mt-4 flex justify-center">
-                <div className="w-full max-w-4xl">
-                    <Pagination
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        onPageChange={loadPrices}
-                    />
+
+            {!isFiltered && (
+                <div className="mt-4 flex justify-center">
+                    <div className="w-full max-w-4xl">
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={loadPrices}
+                        />
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 }

@@ -55,3 +55,12 @@ export async function fetchPriceCount(): Promise<number> {
     const data: PriceCountResponse = await response.json();
     return data.count;
 }
+
+export async function fetchPriceUpdatesBySymbol(symbol: string): Promise<PriceUpdate[]> {
+    const response = await fetch(`${config.baseUrl}/price/symbol?symbol=${symbol}`);
+    if (!response.ok) {
+        throw new Error('Error fetching price updates by symbol');
+    }
+    const data: PriceUpdatesResponse = await response.json();
+    return data.price_updates;
+}

@@ -122,6 +122,10 @@ func (c *Resolver) DeleteSymbol(symbol string) error {
 	return nil
 }
 
+func (c *Resolver) GetPriceUpdatesBySymbol(symbol string) ([]db.PriceUpdate, error) {
+	return db.SearchPriceUpdatesBySymbol(symbol)
+}
+
 func (c *Resolver) GetPriceUpdates(page, pageSize int) ([]db.PriceUpdate, error) {
 	return db.GetPriceUpdates(page, pageSize)
 }

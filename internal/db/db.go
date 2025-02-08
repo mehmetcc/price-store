@@ -47,3 +47,13 @@ func GetTotalPriceUpdatesCount() (int64, error) {
 	result := db.Model(&PriceUpdate{}).Count(&count)
 	return count, result.Error
 }
+
+func SearchPriceUpdatesBySymbol(symbol string) ([]PriceUpdate, error) {
+	var priceUpdates []PriceUpdate
+	result := db.Where("symbol = ?", symbol).Find(&priceUpdates)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return priceUpdates, nil
+}

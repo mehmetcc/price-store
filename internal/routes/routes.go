@@ -156,4 +156,36 @@ func SetupRoutes(mux *http.ServeMux, resolver *admin.Resolver) {
 			"count": count,
 		})
 	})
+
+	mux.HandleFunc("/price/symbol", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		if r.Method == http.MethodOptions {
+			return
+		}
+
+		if r.Method != http.MethodGet {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		symbol := r.URL.Query().Get("symbol")
+		if symbol == "" {
+			http.Error(w, "symbol is required", http.StatusBadRequest)
+			return
+		}
+
+		priceUpdates, err := resolver.GetPriceUpdatesBySymbol(symbol)
+		if err != nil {
+			http.Error(w, "failed to retrieve price updates", http.StatusInternalServerError)
+			log.Println(err)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"price_updates": priceUpdates,
+		})
+	})
 }
