@@ -6,6 +6,7 @@ import { PriceUpdate } from '../types';
 import Pagination from './Pagination';
 import { SymbolFilter } from './SymbolFilter';
 import config from '@/config/config';
+import Link from 'next/link';
 
 export default function PastPricesList() {
     const [prices, setPrices] = useState<PriceUpdate[]>([]);
@@ -88,15 +89,21 @@ export default function PastPricesList() {
                     {prices.map((price) => (
                         <tr key={price.id}>
                             <td className="px-4 py-2 border">{price.id}</td>
-                            <td className="px-4 py-2 border">{price.symbol}</td>
+                            <td className="px-4 py-2 border">
+                                <Link
+                                    href={`/symbols/${price.symbol}`}
+                                    className="text-blue-600 hover:text-blue-800 hover:underline"
+                                >
+                                    {price.symbol}
+                                </Link>
+                            </td>
                             <td className="px-4 py-2 border">{price.price.toFixed(2)}</td>
                             <td className="px-4 py-2 border">
                                 {new Date(price.timestamp).toLocaleString()}
                             </td>
                         </tr>
                     ))}
-                </tbody>
-            </table>
+                </tbody>            </table>
 
             <div className="mt-4 flex justify-center">
                 <div className="w-full max-w-4xl">
