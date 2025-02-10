@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/mehmetcc/price-store/internal/admin"
+	"github.com/mehmetcc/symbol-store/internal/admin"
 )
 
 func SetupRoutes(mux *http.ServeMux, resolver *admin.Resolver) {

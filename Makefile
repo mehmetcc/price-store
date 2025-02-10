@@ -2,7 +2,7 @@
 
 # Define constants
 SRC = cmd/main.go
-APP_NAME = price-store
+APP_NAME = symbol-store
 
 # Default target
 .PHONY: all

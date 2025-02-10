@@ -1,4 +1,4 @@
-module github.com/mehmetcc/price-store
+module github.com/mehmetcc/symbol-store
 
 go 1.22.5
 

@@ -7,8 +7,8 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/mehmetcc/price-store/internal/config"
-	"github.com/mehmetcc/price-store/internal/db"
+	"github.com/mehmetcc/symbol-store/internal/config"
+	"github.com/mehmetcc/symbol-store/internal/db"
 )
 
 type Resolver struct {

@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Price Store",
-  description: "Price Store Dashboard",
+  title: "Symbol Store",
+  description: "Symbol Store Dashboard",
 };
 
 export default function RootLayout({

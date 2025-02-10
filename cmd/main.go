@@ -7,11 +7,11 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/mehmetcc/price-store/internal/admin"
-	"github.com/mehmetcc/price-store/internal/config"
-	"github.com/mehmetcc/price-store/internal/db"
-	"github.com/mehmetcc/price-store/internal/routes"
-	"github.com/mehmetcc/price-store/internal/websocket"
+	"github.com/mehmetcc/symbol-store/internal/admin"
+	"github.com/mehmetcc/symbol-store/internal/config"
+	"github.com/mehmetcc/symbol-store/internal/db"
+	"github.com/mehmetcc/symbol-store/internal/routes"
+	"github.com/mehmetcc/symbol-store/internal/websocket"
 )
 
 func main() {

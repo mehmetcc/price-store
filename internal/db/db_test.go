@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/mehmetcc/price-store/internal/config"
+	"github.com/mehmetcc/symbol-store/internal/config"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 )

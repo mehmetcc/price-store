@@ -4,7 +4,7 @@ import (
 	"errors"
 	"log"
 
-	"github.com/mehmetcc/price-store/internal/config"
+	"github.com/mehmetcc/symbol-store/internal/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
